@@ -17,7 +17,7 @@ function AddressInput({
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="min-w-[45ch] px-2 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:border-gray-600 dark:focus:border-gray-300"
+        className="w-full text-xs sm:text-base px-2 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:border-gray-600 dark:focus:border-gray-300"
       />
       {text !== address && (
         <button

@@ -138,9 +138,13 @@ function App() {
   const sw = useShardwallet();
 
   return (
-    <div className="flex min-h-screen justify-center items-center bg-gray-50 dark:bg-gray-900">
+    <div className="flex mt-8 sm:mt-0 sm:min-h-screen justify-center items-center bg-gray-50 dark:bg-gray-900 p-3">
       <div className="flex flex-col gap-3 p-5 md:p-8 w-full max-w-screen-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-h-[300px]">
-        <div>Account: {account ?? <ConnectWallet />}</div>
+        <div>
+          <Label>Account</Label>{" "}
+          {account && <span className="text-sm">{account}</span>}
+          {!account && <ConnectWallet />}
+        </div>
         <div>
           <Label>Shardwallet</Label>
           <AddressInput
@@ -154,7 +158,7 @@ function App() {
             <select
               value={sw.selectedShard ?? undefined}
               onChange={(e) => sw.setSelectedShard(e.target.value)}
-              className="block pl-2 pr-1 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"
+              className="text-sm sm:text-base block pl-1 pr-1 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"
             >
               {sw.shardIds.map((s) => (
                 <option key={s} value={s}>
