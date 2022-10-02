@@ -1,6 +1,7 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
-import "./App.css";
+
+import { useWeb3 } from "./lib/web3";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -27,6 +28,19 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <HelloWeb3 />
+    </div>
+  );
+}
+
+function HelloWeb3() {
+  const web3 = useWeb3();
+  console.log("rendering HelloWeb3:", web3);
+  return (
+    <div>
+      <button onClick={() => web3.connectMetamask()}>connect</button>
+      <br />
+      you are {web3.account ?? "not connected"}
     </div>
   );
 }
