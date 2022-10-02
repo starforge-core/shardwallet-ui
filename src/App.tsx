@@ -1,13 +1,11 @@
 import { useWeb3 } from "./lib/web3";
+import ConnectWallet from "./components/ConnectWallet";
 
 function App() {
   const { account, provider, connectMetamask } = useWeb3();
   return (
     <div className="flex flex-col gap-3">
-      <div>
-        Account:{" "}
-        {account ?? <button onClick={() => connectMetamask()}>Connect</button>}
-      </div>
+      <div>Account: {account ?? <ConnectWallet />}</div>
     </div>
   );
 }
