@@ -3,9 +3,13 @@ import type { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
 import { useEffect, useState } from "react";
 
+import ethLogo from "../static/img/eth-logo.svg";
+import wethLogo from "../static/img/weth-logo.svg";
+
 import { useWeb3 } from "./lib/web3";
 import AddressInput from "./components/AddressInput";
 import ConnectWallet from "./components/ConnectWallet";
+import Label from "./components/core/Label";
 
 const SHARDWALLET_ABI = [
   "function balanceOf(address owner) external view returns (uint256)",
@@ -18,11 +22,13 @@ const CURRENCIES = [
     name: "ETH",
     address: "0x0000000000000000000000000000000000000000",
     decimals: 18,
+    logo: ethLogo,
   },
   {
     name: "WETH",
     address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     decimals: 18,
+    logo: wethLogo,
   },
 ];
 
@@ -132,53 +138,59 @@ function App() {
   const sw = useShardwallet();
 
   return (
-    <div className="flex flex-col gap-3 p-3">
-      <div>Account: {account ?? <ConnectWallet />}</div>
-      <div>
-        Shardwallet:{" "}
-        <AddressInput
-          className="inline-flex"
-          address={sw.shardwallet}
-          setAddress={sw.setShardwallet}
-        />
-      </div>
-      {sw.shardIds.length > 0 && (
+    <div className="flex min-h-screen justify-center items-center bg-gray-50 dark:bg-gray-900">
+      <div className="flex flex-col gap-3 p-5 md:p-8 w-full max-w-screen-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-h-[300px]">
+        <div>Account: {account ?? <ConnectWallet />}</div>
         <div>
-          Shard:{" "}
-          <select
-            value={sw.selectedShard ?? undefined}
-            onChange={(e) => sw.setSelectedShard(e.target.value)}
-            className="inline-block"
+          <Label>Shardwallet</Label>
+          <AddressInput
+            address={sw.shardwallet}
+            setAddress={sw.setShardwallet}
+          />
+        </div>
+        {sw.shardIds.length > 0 && (
+          <div>
+            <Label>Shard</Label>
+            <select
+              value={sw.selectedShard ?? undefined}
+              onChange={(e) => sw.setSelectedShard(e.target.value)}
+              className="block pl-2 pr-1 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"
+            >
+              {sw.shardIds.map((s) => (
+                <option key={s} value={s}>
+                  Shard #{s}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        {sw.balances != null && (
+          <div>
+            <Label className="pb-2">Balances</Label>
+            <ul className="">
+              {CURRENCIES.map((c) => (
+                <li key={c.name} className="mb-1 last:mb-0 text-sm font-mono">
+                  <img
+                    src={c.logo}
+                    className="w-5 h-5 inline-block mr-2 relative -translate-y-px"
+                    alt={c.name}
+                  ></img>
+                  {formatUnits(sw.balances![c.address], c.decimals)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {sw.balances != null && (
+          <button
+            className="mt-3 rounded-lg p-2 filter-invert bg-primary-600 text-white dark:bg-primary-800"
+            onClick={sw.claim}
+            disabled={sw.claiming}
           >
-            {sw.shardIds.map((s) => (
-              <option key={s} value={s}>
-                Shard #{s}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-      {sw.balances != null && (
-        <div>
-          Balances:
-          <ul className="list-disc list-inside pl-3">
-            {CURRENCIES.map((c) => (
-              <li key={c.name}>
-                {formatUnits(sw.balances![c.address], c.decimals)} {c.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {sw.balances != null && (
-        <button
-          className="rounded-sm p-3 filter-invert bg-red-500/50"
-          onClick={sw.claim}
-          disabled={sw.claiming}
-        >
-          Claim
-        </button>
-      )}
+            Claim
+          </button>
+        )}
+      </div>
     </div>
   );
 }
