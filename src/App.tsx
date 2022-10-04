@@ -1,5 +1,6 @@
+import { BigNumber } from "@ethersproject/bignumber";
+import { WeiPerEther, Zero } from "@ethersproject/constants";
 import { Contract } from "@ethersproject/contracts";
-import type { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
 import { useEffect, useState } from "react";
 
@@ -17,18 +18,26 @@ const SHARDWALLET_ABI = [
   "function claim(uint256 tokenId, address[] currencies, uint24 fractionMicros) external returns (uint256[] amounts)",
 ];
 
+const PRICE_ORACLE_ADDRESS = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"; // eth-usd.data.eth
+const PRICE_ORACLE_ABI = [
+  "function decimals() external view returns (uint8)",
+  "function latestRoundData() external view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)",
+];
+
 const CURRENCIES = [
   {
     name: "ETH",
     address: "0x0000000000000000000000000000000000000000",
     decimals: 18,
     logo: ethLogo,
+    pricedLikeEth: true,
   },
   {
     name: "WETH",
     address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     decimals: 18,
     logo: wethLogo,
+    pricedLikeEth: true,
   },
 ];
 
@@ -133,10 +142,53 @@ function useShardwallet() {
   };
 }
 
+function useEthPrice() {
+  const { provider } = useWeb3();
+  const [data, setData] = useState<null | {
+    price: BigNumber;
+    decimals: number;
+    timestamp: Date;
+  }>(null);
+
+  const contract =
+    provider && new Contract(PRICE_ORACLE_ADDRESS, PRICE_ORACLE_ABI, provider);
+
+  useEffect(() => {
+    if (contract == null) {
+      setData(null);
+      return;
+    }
+    const ac = new AbortController();
+    async function go() {
+      const [decimals, { answer: price, updatedAt }] = await Promise.all([
+        contract!.decimals(),
+        contract!.latestRoundData(),
+      ]);
+      if (ac.signal.aborted) return;
+      const timestamp = new Date(updatedAt * 1000);
+      setData({ price, decimals, timestamp });
+    }
+    go();
+    return () => ac.abort();
+  }, [provider, contract?.address]);
+
+  return data;
+}
+
 function App() {
   const { account, provider, connectMetamask } = useWeb3();
   const [claimPercentage, setClaimPercentage] = useState(100);
   const sw = useShardwallet();
+  const ethPrice = useEthPrice();
+
+  function ethToDisplayUsd(wei: BigNumber) {
+    if (ethPrice == null) return null;
+    const cents = wei
+      .mul(ethPrice.price)
+      .mul(100)
+      .div(BigNumber.from(10).pow(ethPrice.decimals + 18));
+    return "$" + (cents.toNumber() / 100).toFixed(2);
+  }
 
   return (
     <div className="flex mt-8 sm:mt-0 sm:min-h-screen justify-center items-center bg-gray-50 dark:bg-gray-900 p-3">
@@ -181,6 +233,9 @@ function App() {
                     alt={c.name}
                   ></img>
                   {formatUnits(sw.balances![c.address], c.decimals)}
+                  {ethPrice != null && c.pricedLikeEth && (
+                    <> ({ethToDisplayUsd(sw.balances![c.address])})</>
+                  )}
                 </li>
               ))}
             </ul>
@@ -207,6 +262,25 @@ function App() {
                 %
               </label>{" "}
               of available balance
+              {ethPrice != null && (
+                <>
+                  {" "}
+                  (
+                  {ethToDisplayUsd(
+                    Object.entries(sw.balances)
+                      .reduce(
+                        (acc, [k, v]) =>
+                          CURRENCIES.find((x) => x.address === k)!.pricedLikeEth
+                            ? acc.add(v)
+                            : acc,
+                        Zero
+                      )
+                      .mul(claimPercentage)
+                      .div(100)
+                  )}
+                  )
+                </>
+              )}
             </div>
           </div>
         )}
@@ -218,6 +292,13 @@ function App() {
           >
             Claim
           </button>
+        )}
+        {ethPrice != null && (
+          <span className="italic">
+            For display purposes, using ETH price of{" "}
+            <span className="not-italic">{ethToDisplayUsd(WeiPerEther)}</span>{" "}
+            as of {ethPrice.timestamp.toLocaleString()}.
+          </span>
         )}
       </div>
     </div>
