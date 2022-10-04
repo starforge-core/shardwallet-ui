@@ -59,13 +59,13 @@ function useShardwallet() {
     provider?.getSigner()
   );
 
-  async function claim() {
+  async function claim(fractionMicros: number) {
     try {
       setClaiming(true);
       const tx = await contract.claim(
         selectedShard,
         Object.values(CURRENCIES).map((x) => x.address),
-        1e6
+        fractionMicros
       );
       await tx.wait();
     } finally {
@@ -135,6 +135,7 @@ function useShardwallet() {
 
 function App() {
   const { account, provider, connectMetamask } = useWeb3();
+  const [claimPercentage, setClaimPercentage] = useState(100);
   const sw = useShardwallet();
 
   return (
@@ -186,9 +187,33 @@ function App() {
           </div>
         )}
         {sw.balances != null && (
+          <div>
+            <Label>Claim fraction</Label>
+            <div>
+              Claim{" "}
+              <label>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  className="w-[3em]"
+                  value={claimPercentage}
+                  onChange={(e) => {
+                    const v = e.target.valueAsNumber;
+                    if (typeof v === "number" && v >= 0 && v <= 100)
+                      setClaimPercentage(v);
+                  }}
+                />
+                %
+              </label>{" "}
+              of available balance
+            </div>
+          </div>
+        )}
+        {sw.balances != null && (
           <button
             className="mt-3 rounded-lg p-2 filter-invert bg-primary-600 text-white dark:bg-primary-800"
-            onClick={sw.claim}
+            onClick={() => sw.claim(claimPercentage * 1e4)}
             disabled={sw.claiming}
           >
             Claim
