@@ -265,7 +265,7 @@ function App() {
               {ethPrice != null && (
                 <>
                   {" "}
-                  (
+                  (will claim{" "}
                   {ethToDisplayUsd(
                     Object.entries(sw.balances)
                       .reduce(
