@@ -205,104 +205,107 @@ function App() {
             setAddress={sw.setShardwallet}
           />
         </div>
-        {sw.shardIds.length > 0 && (
-          <div>
-            <Label>Shard</Label>
-            <select
-              value={sw.selectedShard ?? undefined}
-              onChange={(e) => sw.setSelectedShard(e.target.value)}
-              className="text-sm sm:text-base block pl-1 pr-1 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"
-            >
-              {sw.shardIds.map((s) => (
-                <option key={s} value={s}>
-                  Shard #{s}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        {sw.balances != null && (
-          <div>
-            <Label
-              className="pb-2"
-              title={
-                ethPrice != null &&
-                `Conversions using ETH price of ${ethToDisplayUsd(
-                  WeiPerEther
-                )} as of ${ethPrice.timestamp.toLocaleString()}.`
-              }
-            >
-              Balances
-            </Label>
-            <ul className="">
-              {CURRENCIES.map((c) => (
-                <li key={c.name} className="mb-1 last:mb-0 text-sm font-mono">
-                  <img
-                    src={c.logo}
-                    className="w-5 h-5 inline-block mr-2 relative -translate-y-px"
-                    alt={c.name}
-                  ></img>
-                  {formatUnits(sw.balances![c.address], c.decimals)}
-                  {ethPrice != null && c.pricedLikeEth && (
-                    <> ({ethToDisplayUsd(sw.balances![c.address])})</>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {sw.balances != null && (
-          <div>
-            <Label>Claim fraction</Label>
-            <div>
-              Claim{" "}
-              <label>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  className="w-[3em]"
-                  value={claimPercentage}
-                  onChange={(e) => {
-                    const v = e.target.valueAsNumber;
-                    if (typeof v === "number" && v >= 0 && v <= 100)
-                      setClaimPercentage(v);
-                  }}
-                />
-                %
-              </label>{" "}
-              of available balance
-              {ethPrice != null && (
-                <>
-                  {" "}
-                  (will claim{" "}
-                  {ethToDisplayUsd(
-                    Object.entries(sw.balances)
-                      .reduce(
-                        (acc, [k, v]) =>
-                          CURRENCIES.find((x) => x.address === k)!.pricedLikeEth
-                            ? acc.add(v)
-                            : acc,
-                        Zero
-                      )
-                      .mul(claimPercentage)
-                      .div(100)
-                  )}
-                  )
-                </>
-              )}
-            </div>
-          </div>
-        )}
-        {sw.balances != null && (
-          <button
-            className="mt-3 rounded-lg p-2 filter-invert bg-primary-600 text-white dark:bg-primary-800"
-            onClick={() => sw.claim(claimPercentage * 1e4)}
-            disabled={sw.claiming}
+        <div>
+          <Label>Shard</Label>
+          <select
+            disabled={sw.shardIds.length === 0}
+            value={sw.selectedShard ?? undefined}
+            onChange={(e) => sw.setSelectedShard(e.target.value)}
+            className="text-sm sm:text-base block pl-1 pr-1 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 min-w-16"
           >
-            Claim
-          </button>
-        )}
+            {sw.shardIds.length === 0 && <option>Loading…</option>}
+            {sw.shardIds.map((s) => (
+              <option key={s} value={s}>
+                Shard #{s}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <Label
+            className="pb-2"
+            title={
+              ethPrice != null &&
+              `Conversions using ETH price of ${ethToDisplayUsd(
+                WeiPerEther
+              )} as of ${ethPrice.timestamp.toLocaleString()}.`
+            }
+          >
+            Balances
+          </Label>
+          <ul className="">
+            {CURRENCIES.map((c) => (
+              <li key={c.name} className="mb-1 last:mb-0 text-sm">
+                <img
+                  src={c.logo}
+                  className="w-5 h-5 inline-block mr-2 relative -translate-y-px"
+                  alt={c.name}
+                ></img>
+                {sw.balances == null && <span>Loading…</span>}
+                {sw.balances != null && (
+                  <>
+                    <span className="font-mono">
+                      {formatUnits(sw.balances![c.address], c.decimals)}
+                    </span>
+                    {ethPrice != null && c.pricedLikeEth && (
+                      <span className="ml-2">
+                        ({ethToDisplayUsd(sw.balances![c.address])})
+                      </span>
+                    )}
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <Label>Claim fraction</Label>
+          <div>
+            Claim{" "}
+            <label>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                className="w-[3em]"
+                value={claimPercentage}
+                onChange={(e) => {
+                  const v = e.target.valueAsNumber;
+                  if (typeof v === "number" && v >= 0 && v <= 100)
+                    setClaimPercentage(v);
+                }}
+              />
+              %
+            </label>{" "}
+            of available balance
+            {sw.balances != null && ethPrice != null && (
+              <>
+                {" "}
+                (will claim{" "}
+                {ethToDisplayUsd(
+                  Object.entries(sw.balances)
+                    .reduce(
+                      (acc, [k, v]) =>
+                        CURRENCIES.find((x) => x.address === k)!.pricedLikeEth
+                          ? acc.add(v)
+                          : acc,
+                      Zero
+                    )
+                    .mul(claimPercentage)
+                    .div(100)
+                )}
+                )
+              </>
+            )}
+          </div>
+        </div>
+        <button
+          className="mt-3 rounded-lg p-2 filter-invert bg-primary-600 text-white dark:bg-primary-800 disabled:bg-gray-400 disabled:dark:bg-gray-600"
+          onClick={() => sw.claim(claimPercentage * 1e4)}
+          disabled={sw.balances == null || sw.claiming}
+        >
+          Claim
+        </button>
       </div>
       <div className="flex flex-col gap-3 p-5 md:p-8 md:py-5 w-full max-w-screen-sm rounded-lg">
         <div>
