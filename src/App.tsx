@@ -190,6 +190,13 @@ function App() {
     return "$" + (cents.toNumber() / 100).toFixed(2);
   }
 
+  const ethPriceTooltip =
+    ethPrice == null
+      ? null
+      : `Conversions using ETH price of ${ethToDisplayUsd(
+          WeiPerEther
+        )} as of ${ethPrice.timestamp.toLocaleString()}.`;
+
   return (
     <div className="flex flex-col mt-8 sm:mt-0 sm:min-h-screen justify-center items-center bg-gray-50 dark:bg-gray-900 p-3">
       <div className="flex flex-col gap-3 p-5 md:p-8 w-full max-w-screen-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-h-[300px]">
@@ -222,15 +229,7 @@ function App() {
           </select>
         </div>
         <div>
-          <Label
-            className="pb-2"
-            title={
-              ethPrice != null &&
-              `Conversions using ETH price of ${ethToDisplayUsd(
-                WeiPerEther
-              )} as of ${ethPrice.timestamp.toLocaleString()}.`
-            }
-          >
+          <Label className="pb-2" title={ethPriceTooltip}>
             Balances
           </Label>
           <ul className="">
@@ -248,7 +247,7 @@ function App() {
                       {formatUnits(sw.balances![c.address], c.decimals)}
                     </span>
                     {ethPrice != null && c.pricedLikeEth && (
-                      <span className="ml-2">
+                      <span className="ml-2" title={ethPriceTooltip}>
                         ({ethToDisplayUsd(sw.balances![c.address])})
                       </span>
                     )}
@@ -282,18 +281,20 @@ function App() {
               <>
                 {" "}
                 (will claim{" "}
-                {ethToDisplayUsd(
-                  Object.entries(sw.balances)
-                    .reduce(
-                      (acc, [k, v]) =>
-                        CURRENCIES.find((x) => x.address === k)!.pricedLikeEth
-                          ? acc.add(v)
-                          : acc,
-                      Zero
-                    )
-                    .mul(claimPercentage)
-                    .div(100)
-                )}
+                <span title={ethPriceTooltip}>
+                  {ethToDisplayUsd(
+                    Object.entries(sw.balances)
+                      .reduce(
+                        (acc, [k, v]) =>
+                          CURRENCIES.find((x) => x.address === k)!.pricedLikeEth
+                            ? acc.add(v)
+                            : acc,
+                        Zero
+                      )
+                      .mul(claimPercentage)
+                      .div(100)
+                  )}
+                </span>
                 )
               </>
             )}
