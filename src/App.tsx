@@ -244,6 +244,7 @@ function App() {
                   src={c.logo}
                   className="w-5 h-5 inline-block mr-2 relative -translate-y-px"
                   alt={c.name}
+                  title={c.name}
                 ></img>
                 {sw.balances == null && <span>Loading…</span>}
                 {sw.balances != null && (
