@@ -293,13 +293,6 @@ function App() {
             Claim
           </button>
         )}
-        {ethPrice != null && (
-          <span className="italic">
-            Displaying ETH price of{" "}
-            <span className="not-italic">{ethToDisplayUsd(WeiPerEther)}</span>{" "}
-            as of {ethPrice.timestamp.toLocaleString()}.
-          </span>
-        )}
         <div>
           <Label>External links</Label>
           <ul>
