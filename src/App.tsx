@@ -300,6 +300,20 @@ function App() {
             as of {ethPrice.timestamp.toLocaleString()}.
           </span>
         )}
+        <div>
+          <Label>External links</Label>
+          <ul>
+            <li>
+              <a
+                href="https://app.uniswap.org/#/swap?inputCurrency=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2&outputCurrency=ETH"
+                target="_blank"
+                className="underline hover:text-primary-600 dark:hover:text-primary-300"
+              >
+                Uniswap: unwrap WETH to ETH
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
