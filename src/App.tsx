@@ -204,7 +204,11 @@ function App() {
         <div>
           <Label>Account</Label>{" "}
           {account != null && <span className="text-sm">{account}</span>}
-          {<ConnectWallet className={account != null && "invisible"} />}
+          {
+            <ConnectWallet
+              className={classNames("ml-3", account != null && "invisible")}
+            />
+          }
         </div>
         <div className={account == null && "invisible"}>
           <Label>Shardwallet</Label>

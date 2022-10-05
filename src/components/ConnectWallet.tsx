@@ -19,7 +19,7 @@ function ConnectWallet({ className }: { className?: string | false|null|undefine
   return (
     <button
       className={classNames(
-        "border border-gray-500 px-3 py-1 text-sm rounded-lg",
+        "border border-gray-300 bg-gray-100 dark:border-gray-500 dark:bg-gray-700 active:bg-gray-200 active:dark:bg-primary-700 px-3 py-1 text-sm rounded-lg",
         className
       )}
       onClick={handleClick}
