@@ -210,14 +210,14 @@ function App() {
             />
           }
         </div>
-        <div className={account == null && "invisible"}>
+        <div className={classNames(account == null && "invisible")}>
           <Label>Shardwallet</Label>
           <AddressInput
             address={sw.shardwallet}
             setAddress={sw.setShardwallet}
           />
         </div>
-        <div className={account == null && "invisible"}>
+        <div className={classNames(account == null && "invisible")}>
           <Label>Shard</Label>
           <select
             disabled={sw.shardIds.length === 0}
@@ -233,7 +233,7 @@ function App() {
             ))}
           </select>
         </div>
-        <div className={account == null && "invisible"}>
+        <div className={classNames(account == null && "invisible")}>
           <Label className="pb-2" title={ethPriceTooltip}>
             Balances
           </Label>
@@ -262,7 +262,7 @@ function App() {
             ))}
           </ul>
         </div>
-        <div className={account == null && "invisible"}>
+        <div className={classNames(account == null && "invisible")}>
           <Label>Claim fraction</Label>
           <div>
             Claim{" "}
