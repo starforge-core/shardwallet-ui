@@ -1,6 +1,14 @@
+import type { ReactNode } from "react";
+
 import classNames from "../../lib/classNames";
 
-const Label = ({ className, children }) => {
+const Label = ({
+  className,
+  children,
+}: {
+  className?: string | undefined;
+  children: ReactNode;
+}) => {
   return (
     <label
       className={classNames(
