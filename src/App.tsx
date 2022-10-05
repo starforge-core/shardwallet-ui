@@ -192,7 +192,7 @@ function App() {
 
   const ethPriceTooltip =
     ethPrice == null
-      ? null
+      ? undefined
       : `Conversions using ETH price of ${ethToDisplayUsd(
           WeiPerEther
         )} as of ${ethPrice.timestamp.toLocaleString()}.`;
