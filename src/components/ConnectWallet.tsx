@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
+import classNames from "../lib/classNames";
 import { useWeb3 } from "../lib/web3";
 
-function ConnectWallet() {
+function ConnectWallet({ className }: { className?: string | false|null|undefined }) {
   const [loading, setLoading] = useState(false);
   const { connectMetamask } = useWeb3();
 
@@ -17,7 +18,10 @@ function ConnectWallet() {
 
   return (
     <button
-      className="border border-gray-500 px-3 py-2 text-sm rounded-lg"
+      className={classNames(
+        "border border-gray-500 px-3 py-1 text-sm rounded-lg",
+        className
+      )}
       onClick={handleClick}
       disabled={loading}
     >

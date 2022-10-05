@@ -195,8 +195,8 @@ function App() {
       <div className="flex flex-col gap-3 p-5 md:p-8 w-full max-w-screen-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-h-[300px]">
         <div>
           <Label>Account</Label>{" "}
-          {account && <span className="text-sm">{account}</span>}
-          {!account && <ConnectWallet />}
+          {account != null && <span className="text-sm">{account}</span>}
+          {<ConnectWallet className={account != null && "invisible"} />}
         </div>
         <div>
           <Label>Shardwallet</Label>
