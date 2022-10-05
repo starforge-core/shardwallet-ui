@@ -223,7 +223,17 @@ function App() {
         )}
         {sw.balances != null && (
           <div>
-            <Label className="pb-2">Balances</Label>
+            <Label
+              className="pb-2"
+              title={
+                ethPrice != null &&
+                `Conversions using ETH price of ${ethToDisplayUsd(
+                  WeiPerEther
+                )} as of ${ethPrice.timestamp.toLocaleString()}.`
+              }
+            >
+              Balances
+            </Label>
             <ul className="">
               {CURRENCIES.map((c) => (
                 <li key={c.name} className="mb-1 last:mb-0 text-sm font-mono">
