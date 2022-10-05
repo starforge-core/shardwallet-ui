@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import ethLogo from "../static/img/eth-logo.svg";
 import wethLogo from "../static/img/weth-logo.svg";
 
+import classNames from "./lib/classNames";
 import { useWeb3 } from "./lib/web3";
 import AddressInput from "./components/AddressInput";
 import ConnectWallet from "./components/ConnectWallet";
@@ -205,14 +206,14 @@ function App() {
           {account != null && <span className="text-sm">{account}</span>}
           {<ConnectWallet className={account != null && "invisible"} />}
         </div>
-        <div>
+        <div className={account == null && "invisible"}>
           <Label>Shardwallet</Label>
           <AddressInput
             address={sw.shardwallet}
             setAddress={sw.setShardwallet}
           />
         </div>
-        <div>
+        <div className={account == null && "invisible"}>
           <Label>Shard</Label>
           <select
             disabled={sw.shardIds.length === 0}
@@ -228,7 +229,7 @@ function App() {
             ))}
           </select>
         </div>
-        <div>
+        <div className={account == null && "invisible"}>
           <Label className="pb-2" title={ethPriceTooltip}>
             Balances
           </Label>
@@ -257,7 +258,7 @@ function App() {
             ))}
           </ul>
         </div>
-        <div>
+        <div className={account == null && "invisible"}>
           <Label>Claim fraction</Label>
           <div>
             Claim{" "}
@@ -301,7 +302,10 @@ function App() {
           </div>
         </div>
         <button
-          className="mt-3 rounded-lg p-2 filter-invert bg-primary-600 text-white dark:bg-primary-800 disabled:bg-gray-400 disabled:dark:bg-gray-600"
+          className={classNames(
+            "mt-3 rounded-lg p-2 filter-invert bg-primary-600 text-white dark:bg-primary-800 disabled:bg-gray-400 disabled:dark:bg-gray-600",
+            account == null && "invisible"
+          )}
           onClick={() => sw.claim(claimPercentage * 1e4)}
           disabled={sw.balances == null || sw.claiming}
         >
