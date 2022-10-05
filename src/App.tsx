@@ -295,7 +295,7 @@ function App() {
         )}
         {ethPrice != null && (
           <span className="italic">
-            For display purposes, using ETH price of{" "}
+            Displaying ETH price of{" "}
             <span className="not-italic">{ethToDisplayUsd(WeiPerEther)}</span>{" "}
             as of {ethPrice.timestamp.toLocaleString()}.
           </span>
