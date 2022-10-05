@@ -191,7 +191,7 @@ function App() {
   }
 
   return (
-    <div className="flex mt-8 sm:mt-0 sm:min-h-screen justify-center items-center bg-gray-50 dark:bg-gray-900 p-3">
+    <div className="flex flex-col mt-8 sm:mt-0 sm:min-h-screen justify-center items-center bg-gray-50 dark:bg-gray-900 p-3">
       <div className="flex flex-col gap-3 p-5 md:p-8 w-full max-w-screen-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-h-[300px]">
         <div>
           <Label>Account</Label>{" "}
@@ -293,6 +293,8 @@ function App() {
             Claim
           </button>
         )}
+      </div>
+      <div className="flex flex-col gap-3 p-5 md:p-8 md:py-5 w-full max-w-screen-sm rounded-lg">
         <div>
           <Label>External links</Label>
           <ul>
